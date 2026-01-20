@@ -37,6 +37,17 @@ This repository contains classwork and assignments from the Backend Development 
 - Working with JSON data
 - Fetching and processing data
 
+### Class 8: OS Module (Operating System)
+- Introduction to Node.js OS module
+- Getting system information (platform, architecture, release)
+- CPU information and core details
+- Memory management (total memory, free memory)
+- User information and home directory
+- Network interfaces
+- System uptime and load average
+- Hostname and temporary directory paths
+- Practical applications of OS module
+
 ---
 
 ## 📂 Repository Structure
@@ -192,6 +203,7 @@ node wordCounter.js
 - [x] Class 3: JavaScript Advanced & Async/Await
 - [x] Class 4-5: Node.js Basics & Installation
 - [x] Class 6-7: Node.js Servers & APIs
+- [x] Class 8: OS Module
 - [ ] Upcoming: Express.js Framework
 - [ ] Upcoming: Database Integration
 - [ ] Upcoming: Authentication & Authorization
