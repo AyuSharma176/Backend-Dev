@@ -48,6 +48,16 @@ This repository contains classwork and assignments from the Backend Development 
 - Hostname and temporary directory paths
 - Practical applications of OS module
 
+### Class 9: File System Operations
+- File operations using Node.js `fs` module
+- Asynchronous file handling with callbacks
+- **copyFile()** - Copying files from source to destination
+- **writeFile()** - Creating new files with content
+- **mkdir()** - Creating directories with recursive option
+- **readdir()** - Reading directory contents
+- Error handling patterns in async operations
+- Working with file paths and directory structures
+
 ---
 
 ## 📂 Repository Structure
@@ -204,6 +214,7 @@ node wordCounter.js
 - [x] Class 4-5: Node.js Basics & Installation
 - [x] Class 6-7: Node.js Servers & APIs
 - [x] Class 8: OS Module
+- [x] Class 9: File System Operations
 - [ ] Upcoming: Express.js Framework
 - [ ] Upcoming: Database Integration
 - [ ] Upcoming: Authentication & Authorization
@@ -223,4 +234,4 @@ node wordCounter.js
 
 ---
 
-*Last Updated: January 20, 2026*
+*Last Updated: January 21, 2026*
