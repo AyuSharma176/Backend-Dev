@@ -1,4 +1,4 @@
-Hello Node.js Streams
-This is readable stream example
+HELLO NODE.JS STREAMS
+THIS IS READABLE STREAM EXAMPLE
 
-Ayush Sharma
+AYUSH SHARMA
