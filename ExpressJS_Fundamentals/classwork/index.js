@@ -1,0 +1,68 @@
+const express = require("express");
+
+const app = express();
+app.use(express.json());
+const PORT = 8001;
+
+// app.get("/",(req,res)=>{
+//     res.send("WELCOME to HOME PAGE")
+// })
+
+// app.get("/users",(req,res)=>{
+//     res.send("<h1>This is user page</h1>")
+// })
+
+// app.get("/users/:id",(req,res)=>{
+
+//     const userid = req.params.id;
+//     res.send(`You are requesting for use: ${userid} `)
+// })
+
+// app.listen(PORT,()=>{
+//     console.log(`Server is running : ${PORT}`);
+// })
+
+const students = [
+  { id: 1, name: "Alice", age: 20 },
+  { id: 2, name: "Bob", age: 22 },
+  { id: 3, name: "Charlie", age: 23 },
+  { id: 4, name: "David", age: 21 },
+];
+app.get("/", (req, res) => {
+  res.send("WELCOME to HOME PAGE");
+});
+app.get("/students", (req, res) => {
+  res.json(students);
+});
+app.post("/students", (req, res) => {
+  const newStudent = req.body;
+  const studentid=newStudent.id;
+  const exist=students.find((s)=>s.id===studentid);
+  if(exist){
+    return res.status(400).json({message:"Student with this ID already exists"})
+  }
+  if(newStudent.id==undefined || newStudent.name==undefined || newStudent.age==undefined){
+    return res.status(400).json({message:"Invalid student data"})
+  }
+  students.push(newStudent);
+  res.status(201).json(newStudent);
+});
+app.get("/students/:id", (req, res) => {
+  const studentId = parseInt(req.params.id);
+  const student = students.find((s) => s.id === studentId);
+  if (student) {
+    res.json(student);
+  } else {
+    res.status(404).send({ message: "Student not found" });
+  }
+});
+
+app.get("/search", (req, res) => {
+    const branch = req.query.branch;
+    const foundStudents = students.filter(student => student.branch === branch);
+    res.json(foundStudents);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running : http://localhost:${PORT}`);
+});
