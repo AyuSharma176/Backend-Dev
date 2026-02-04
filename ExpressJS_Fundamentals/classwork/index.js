@@ -61,7 +61,6 @@ app.get("/search", (req, res) => {
     const foundStudents = students.filter(student => student.branch === branch);
     res.json(foundStudents);
 });
-
 app.listen(PORT, () => {
   console.log(`Server is running : http://localhost:${PORT}`);
 });
