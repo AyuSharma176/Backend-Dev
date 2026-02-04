@@ -1,8 +1,12 @@
 const express = require("express");
+const fs = require("fs");
+
+const students = JSON.parse(fs.readFileSync("./db.json", "utf-8"));
 
 const app = express();
 app.use(express.json());
 const PORT = 8001;
+
 
 // app.get("/",(req,res)=>{
 //     res.send("WELCOME to HOME PAGE")
@@ -22,12 +26,6 @@ const PORT = 8001;
 //     console.log(`Server is running : ${PORT}`);
 // })
 
-const students = [
-  { id: 1, name: "Alice", age: 20 },
-  { id: 2, name: "Bob", age: 22 },
-  { id: 3, name: "Charlie", age: 23 },
-  { id: 4, name: "David", age: 21 },
-];
 app.get("/", (req, res) => {
   res.send("WELCOME to HOME PAGE");
 });
@@ -45,6 +43,7 @@ app.post("/students", (req, res) => {
     return res.status(400).json({message:"Invalid student data"})
   }
   students.push(newStudent);
+  fs.writeFileSync("./db.json", JSON.stringify(students));
   res.status(201).json(newStudent);
 });
 app.get("/students/:id", (req, res) => {
