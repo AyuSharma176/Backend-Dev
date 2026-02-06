@@ -1,31 +1,20 @@
 const express = require("express");
 const fs = require("fs");
-
-const students = JSON.parse(fs.readFileSync("./db.json", "utf-8"));
+  
 
 const app = express();
 app.use(express.json());
 const PORT = 8001;
 
+const readfile = () => {
+  const data = fs.readFileSync("./db.json", "utf-8");
+  return JSON.parse(data);
+};
+const writefile = (data) => {
+  fs.writeFileSync("./db.json", JSON.stringify(data));
+}
 
-// app.get("/",(req,res)=>{
-//     res.send("WELCOME to HOME PAGE")
-// })
-
-// app.get("/users",(req,res)=>{
-//     res.send("<h1>This is user page</h1>")
-// })
-
-// app.get("/users/:id",(req,res)=>{
-
-//     const userid = req.params.id;
-//     res.send(`You are requesting for use: ${userid} `)
-// })
-
-// app.listen(PORT,()=>{
-//     console.log(`Server is running : ${PORT}`);
-// })
-
+const students=readfile();
 app.get("/", (req, res) => {
   res.send("WELCOME to HOME PAGE");
 });
@@ -45,7 +34,7 @@ app.post("/students", (req, res) => {
     return res.status(400).json({message:"Invalid student data"})
   }
   students.push(newStudent);
-  fs.writeFileSync("./db.json", JSON.stringify(students));
+  writefile(students);
   res.status(201).json(newStudent);
 });
 
@@ -72,7 +61,7 @@ app.put("/students/:id", (req, res) => {
   }
 
   students[foundIndex] = {...students[foundIndex], ...req.body};
-  fs.writeFileSync("./db.json", JSON.stringify(students));
+  writefile(students);
   const result ={message:"Student updated successfully", student: students[foundIndex]};
   return res.status(200).json(result);
 })
@@ -83,7 +72,7 @@ app.delete("/students/:id", (req, res) => {
     return res.status(404).json({message:"Student not found"})
   }
   students.splice(foundIndex,1);
-  fs.writeFileSync("./db.json", JSON.stringify(students));
+  writefile(students);
   return res.status(200).json({message:"Student deleted successfully"});
 })
 app.listen(PORT, () => {
