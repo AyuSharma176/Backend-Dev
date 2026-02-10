@@ -11,7 +11,22 @@ app.use((req, res, next) => {
   next();
 });
 
+
 const PORT = 8001;
+
+const authMiddleware = (req, res, next) => {
+  const token = req.headers["authorization"];
+  
+  if (!token) {
+    return res.status(401).json({ message: "No token provided. Please login first." });
+  }
+  
+  if (token === "fake-jwt-token") {
+    next(); 
+  } else {
+    return res.status(403).json({ message: "Invalid or expired token" });
+  }
+}
 
 const readfile = async () => {
   const data = await fs.readFile("./db.json", "utf-8");
@@ -23,7 +38,6 @@ const writefile = async (data) => {
 
 let students = [];
 
-// Initialize students data
 (async () => {
   students = await readfile();
 })();
@@ -31,11 +45,11 @@ app.get("/", async (req, res) => {
   res.send("WELCOME to HOME PAGE");
 });
 
-app.get("/students", async (req, res) => {
+app.get("/students", authMiddleware, async (req, res) => {
   res.json(students);
 });
 
-app.post("/students", async (req, res) => {
+app.post("/students", authMiddleware, async (req, res) => {
   const newStudent = req.body;
   const studentid=newStudent.id;
   const exist=students.find((s)=>s.id===studentid);
@@ -50,7 +64,7 @@ app.post("/students", async (req, res) => {
   res.status(201).json(newStudent);
 });
 
-app.get("/students/:id", async (req, res) => {
+app.get("/students/:id", authMiddleware, async (req, res) => {
   const studentId = parseInt(req.params.id);
   const student = students.find((s) => s.id === studentId);
   if (student) {
@@ -60,12 +74,12 @@ app.get("/students/:id", async (req, res) => {
   }
 });
 
-app.get("/search", async (req, res) => {
+app.get("/search", authMiddleware, async (req, res) => {
     const branch = req.query.branch;
     const foundStudents = students.filter(student => student.branch === branch);
     res.json(foundStudents);
 });
-app.put("/students/:id", async (req, res) => {
+app.put("/students/:id", authMiddleware, async (req, res) => {
   const studentId = parseInt(req.params.id);
   const foundIndex = students.findIndex((s) => s.id === studentId);
   if(foundIndex === -1){
@@ -77,7 +91,7 @@ app.put("/students/:id", async (req, res) => {
   const result ={message:"Student updated successfully", student: students[foundIndex]};
   return res.status(200).json(result);
 })
-app.delete("/students/:id", async (req, res) => {
+app.delete("/students/:id", authMiddleware, async (req, res) => {
   const studentId = parseInt(req.params.id);
   const foundIndex = students.findIndex((s) => s.id === studentId);
   if(foundIndex === -1){
@@ -87,6 +101,14 @@ app.delete("/students/:id", async (req, res) => {
   await writefile(students);
   return res.status(200).json({message:"Student deleted successfully"});
 })
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+  if (username === "admin" && password === "password") {
+    return res.json({message:"Login successful", token: "fake-jwt-token" });
+  } else {  
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server is running : http://localhost:${PORT}`);
 });
