@@ -1,19 +1,36 @@
 const express = require("express");
+const session = require("express-session");
 const fs = require("fs").promises;
   
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Middleware
+app.use(session({
+  secret: 'your-secret-key-here',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false, maxAge: 3600000 } 
+})); 
+
 app.use((req, res, next) => {
   console.log("i am middle ware");
   next();
 });
-
+app.set("view engine", "ejs");
 
 const PORT = 8001;
 
+const sessionAuthMiddleware = (req, res, next) => {
+  if (req.session && req.session.isAuthenticated) {
+    next();
+  } else {
+    res.redirect("/");
+  }
+};
+
+// Token-based auth middleware for API routes
 const authMiddleware = (req, res, next) => {
   const token = req.headers["authorization"];
   
@@ -41,14 +58,27 @@ let students = [];
 (async () => {
   students = await readfile();
 })();
-app.get("/", async (req, res) => {
-  res.send("WELCOME to HOME PAGE");
+app.get("/", (req, res) => {
+  if (req.session && req.session.isAuthenticated) {
+    res.redirect("/form");
+  } else {
+    res.render("login");
+  }
+});
+
+app.get("/form", sessionAuthMiddleware, async (req, res) => {
+  res.render("form", { allStudents: students });
 });
 
 app.get("/students", authMiddleware, async (req, res) => {
   res.json(students);
 });
-
+app.post("/submit", sessionAuthMiddleware, async (req, res) => {
+  const newStudent = req.body;
+  students.push(newStudent);
+  await writefile(students);
+  res.redirect("/form");
+});
 app.post("/students", authMiddleware, async (req, res) => {
   const newStudent = req.body;
   const studentid=newStudent.id;
@@ -104,10 +134,30 @@ app.delete("/students/:id", authMiddleware, async (req, res) => {
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (username === "admin" && password === "password") {
-    return res.json({message:"Login successful", token: "fake-jwt-token" });
+    req.session.isAuthenticated = true;
+    req.session.username = username;
+    
+    if (req.headers['content-type'] === 'application/json') {
+      return res.json({message:"Login successful", token: "fake-jwt-token" });
+    } else {
+      return res.redirect("/form");
+    }
   } else {  
-    return res.status(401).json({ message: "Invalid credentials" });
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(401).json({ message: "Invalid credentials" });
+    } else {
+      return res.redirect("/");
+    }
   }
+});
+
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Error logging out" });
+    }
+    res.redirect("/");
+  });
 });
 app.listen(PORT, () => {
   console.log(`Server is running : http://localhost:${PORT}`);
