@@ -131,6 +131,7 @@ app.delete("/students/:id", authMiddleware, async (req, res) => {
   await writefile(students);
   return res.status(200).json({message:"Student deleted successfully"});
 })
+
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (username === "admin" && password === "password") {

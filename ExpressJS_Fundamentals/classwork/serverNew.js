@@ -68,6 +68,17 @@ app.post("/submit", sessionAuthMiddleware, async (req, res) => {
   res.redirect("/form");
 });
 
+app.delete("/delete/:id", sessionAuthMiddleware, async (req, res) => {
+  const studentId = parseInt(req.params.id);
+  const foundIndex = students.findIndex((s) => s.id === studentId);
+  if(foundIndex === -1){
+    return res.status(404).json({success: false, message:"Student not found"})
+  }
+  students.splice(foundIndex,1);
+  await writefile(students);
+  return res.status(200).json({success: true, message:"Student deleted successfully"});
+});
+
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (username === "admin" && password === "password") {
@@ -87,6 +98,8 @@ app.post("/login", (req, res) => {
     }
   }
 });
+
+
 
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
