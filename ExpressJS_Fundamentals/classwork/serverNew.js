@@ -57,9 +57,16 @@ app.get("/", (req, res) => {
 
 
 app.get("/form", sessionAuthMiddleware, async (req, res) => {
-  res.render("form", { allStudents: students });
+  const allStudents = students
+    .filter(student => student !== null)
+    .sort((a, b) => a.id - b.id);   
+
+  res.render("form", { allStudents });
 });
 
+app.get("/home", sessionAuthMiddleware, async (req, res) => {
+  res.render("home", { username: req.session.username });
+});
 
 app.post("/submit", sessionAuthMiddleware, async (req, res) => {
   const newStudent = req.body;
@@ -101,7 +108,7 @@ app.post("/login", (req, res) => {
 
 
 
-app.get("/logout", (req, res) => {
+app.get("/logout", sessionAuthMiddleware, (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ message: "Error logging out" });
