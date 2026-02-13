@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student form</title>
+</head>
+<body>
+    <h1>Student form</h1>
+    <div style="text-align: right;">
+        <button onclick="location.href='/home'" style="color: blue; text-decoration: none; font-weight: bold;">Home</button>
+        <button onclick="location.href='/logout'" style="color: red; text-decoration: none; font-weight: bold;">Logout</button>
+    </div>
+    <form action="/submit" method="POST">
+         <label for="id">ID:</label>
+        <input type="number" id="id" name="id" required><br><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <hr>
+    <h3>Submitted Data:</h3>
+    <ul>
+        <% allStudents.filter(student => student !== null).forEach(student => { %>
+            <li>ID: <%= student.id %>, <%= student.name %> - Age: <%= student.age %> <button class="deletebtn" data-id="<%= student.id %>">Delete</button></li>
+
+        <% }) %>
+    </ul>
+    <script>
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('deletebtn')) {
+                const id = e.target.getAttribute('data-id');
+                fetch(`/delete/${id}`, { method: 'DELETE' }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
