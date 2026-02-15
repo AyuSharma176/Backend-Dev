@@ -33,6 +33,9 @@ app.get("/submitted-data", async(req, res) => {
 app.get("/users", async(req, res) => {
     res.json(users);
 });
+app.use((req, res) => {
+    res.status(404).render("404errorform");
+});
 app.get("/users/:id", (req,res) =>{
     const { id } = req.params;
     const user = users.find(u => u.id === parseInt(id));
