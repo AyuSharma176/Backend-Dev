@@ -1,17 +1,23 @@
 {
-  "name": "assignment",
+  "name": "assignment-middleware-mongoose",
   "version": "1.0.0",
-  "description": "",
-  "license": "ISC",
-  "author": "",
+  "description": "Backend assignment with Express middleware and Mongoose middleware plugins",
+  "main": "app.js",
   "type": "commonjs",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "check": "Get-ChildItem -Recurse -Filter *.js | ForEach-Object { node --check $_.FullName }"
   },
+  "keywords": [
+    "express",
+    "mongoose",
+    "middleware",
+    "assignment"
+  ],
+  "license": "ISC",
   "dependencies": {
     "express": "^5.2.1",
-    "mongodb": "^7.1.1",
-    "mongoose": "^9.3.3"
+    "mongoose": "^9.4.1"
   }
 }
